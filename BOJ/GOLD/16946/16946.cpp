@@ -21,10 +21,9 @@ struct Axis {
 
 int N, M;
 
-vector<Axis> walls;
+queue<Axis> walls;
 int arr[MAX_N][MAX_N];
 int groups[MAX_N][MAX_N];
-int possible[MAX_N * MAX_N];
 
 int dx[4] = {0, 1, 0, -1};
 int dy[4] = {1, 0, -1, 0};
@@ -36,10 +35,7 @@ void input() {
     fi(N) {
         string s;
         i1(s);
-        fj(M) {
-            arr[i][j] = s[j] - '0';
-            if (arr[i][j] == WALL) walls.push_back({i, j});
-        }
+        fj(M) { arr[i][j] = s[j] - '0'; }
     }
 }
 
@@ -51,36 +47,31 @@ void bfs(int x, int y, int idx) {
     while (!q.empty()) {
         Axis cur = q.front();
         q.pop();
+
         cnt++;
         fi(4) {
             int nx = cur.x + dx[i];
             int ny = cur.y + dy[i];
 
             chk(nx, N, ny, M) continue;
-            if (arr[nx][ny] == WALL || groups[nx][ny] == idx) continue;
+            if (groups[nx][ny] == idx) continue;
+            if (arr[nx][ny] != 0) {
+                walls.push({nx, ny});
+                groups[nx][ny] = idx;
+                continue;
+            }
 
             groups[nx][ny] = idx;
             q.push({nx, ny});
         }
     }
 
-    possible[idx] = cnt;
-}
+    while (!walls.empty()) {
+        Axis wall = walls.front();
+        walls.pop();
 
-void test(int idx) {
-    cout << "groups\n";
-    fi(N) {
-        fj(M) { cout << groups[i][j]; }
-        cout << "\n";
+        arr[wall.x][wall.y] += cnt;
     }
-
-    cout << "\npossible\n";
-    fi(idx) cout << i << " : " << possible[i] << "\n";
-}
-
-bool isDuplicate(int groupId, int log[]) {
-    fi(4) if (log[i] == groupId) return true;
-    return false;
 }
 
 void sol() {
@@ -94,29 +85,8 @@ void sol() {
         }
     }
 
-    // test(idx);
-
-    for (Axis wall : walls) {
-        int cnt = 1;
-        int log[4] = {-1, -1, -1, -1};
-
-        fi(4) {
-            int nx = wall.x + dx[i];
-            int ny = wall.y + dy[i];
-
-            chk(nx, N, ny, M) continue;
-            if (arr[nx][ny] != 0) continue;
-            if (isDuplicate(groups[nx][ny], log)) continue;
-
-            cnt += possible[groups[nx][ny]];
-            log[i] = groups[nx][ny];
-        }
-
-        arr[wall.x][wall.y] = cnt;
-    }
-
     fi(N) {
-        fj(M) { cout << arr[i][j]; }
+        fj(M) { cout << arr[i][j] % 10; }
         cout << "\n";
     }
 }
