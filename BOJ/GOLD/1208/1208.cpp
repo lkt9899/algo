@@ -1,5 +1,5 @@
-#include <algorithm>
 #include <iostream>
+#include <map>
 #define fio ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0)
 
 #define i1(a) cin >> a
@@ -15,33 +15,46 @@
 
 using namespace std;
 
-int N, S, P = -1;
-int sums[40];
-
-void init() {}
+int N, S;
+int arr[MAX_N];
+map<int, int> subSum;
+long long cnt;
 
 void input() {
     i2(N, S);
-    fi0(N) i1(sums[i]);
-    sort(sums, sums + N);
-    fi1(N - 1) {
-        sums[i] += sums[i - 1];
-        if (P == -1 && sums[i] > sums[i - 1]) P = i;
+    fi0(N) i1(arr[i]);
+}
+
+void right(int mid, int sum) {
+    if (mid == N) {
+        subSum[sum]++;
+        return;
     }
+
+    right(mid + 1, sum + arr[mid]);
+    right(mid + 1, sum);
 }
 
-bool leftbs(int start, int end, int target) {
-    if (start == end) return target - sums[start] == S;
+void left(int st, int sum) {
+    if (st == N / 2) {
+        cnt += subSum[S - sum];
+        return;
+    }
 
-    int mid = ((start + end) >> 1);
-    if (target - sums[mid] == S) return true;
-    if (target - sums[mid] < S) return bs();
+    left(st + 1, sum + arr[st]);
+    left(st + 1, sum);
 }
 
-void sol() { fi0(N) cout << sums[i] << " "; }
+void sol() {
+    right(N / 2, 0);
+    left(0, 0);
+    if (!S)
+        cout << cnt - 1;
+    else
+        cout << cnt;
+}
 
 void run() {
-    init();
     input();
     sol();
 }
