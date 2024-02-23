@@ -32,17 +32,16 @@ int solution(int coin, vector<int> cards) {
 
     while (idx < N) {
         // pick
-        pick.insert(cards[idx]);
-        pick.insert(cards[idx + 1]);
-        idx += 2;
+        pick.insert(cards[idx++]);
+        pick.insert(cards[idx++]);
 
         // check
-        if (hands.size() >= 2 && check(hands, hands)) {
+        if (check(hands, hands)) {
             answer++;
-        } else if (C >= 1 && hands.size() >= 1 && pick.size() >= 1 && check(hands, pick)) {
+        } else if (C >= 1 && check(hands, pick)) {
             answer++;
             C--;
-        } else if (C >= 2 && pick.size() >= 2 && check(pick, pick)) {
+        } else if (C >= 2 && check(pick, pick)) {
             answer++;
             C -= 2;
         } else
