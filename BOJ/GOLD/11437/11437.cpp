@@ -12,7 +12,7 @@
 #define fj1(e) for (int j = 1; j <= e; j++)
 
 #define MAX_N 50001
-#define MAX_TABLE_SIZE 1 << 17
+#define MAX_TABLE_SIZE 1 << 18
 
 using namespace std;
 
