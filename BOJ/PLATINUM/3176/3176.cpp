@@ -1,13 +1,33 @@
-#include <iostream>
+#include <cstdio>
 #include <vector>
-
-#define fio ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0)
 
 using namespace std;
 
 typedef pair<int, int> pii;
 const int INF = int(1e9);
 const int MAX_N = 100001;
+
+// fast io
+char buf[1 << 17];
+inline char read() {
+    static int idx = 1 << 17;
+    if (idx == 1 << 17) {
+        fread(buf, 1, 1 << 17, stdin);
+        idx = 0;
+    }
+    return buf[idx++];
+}
+
+inline int readInt() {
+    int sum = 0;
+    char cur = read();
+    while (cur == 10 || cur == 32) cur = read();
+    while (cur >= 48 && cur <= 57) {
+        sum = sum * 10 + cur - 48;
+        cur = read();
+    }
+    return sum;
+}
 
 // min seg
 struct MinSeg {
@@ -55,7 +75,7 @@ struct MaxSeg {
 
     // constructor
     void construct() {
-        for (int i = sz - 1; i > 0; i--) {
+        for (int i = sz - 1; i; i--) {
             tree[i] = max(tree[i << 1], tree[i << 1 | 1]);
         }
     }
@@ -128,15 +148,14 @@ struct HLD {
     MinSeg minSeg;
     MaxSeg maxSeg;
     void precalc() {
-        cin >> n;
+        n = readInt();
         for (int i = 1 << 17; i < 1 << 18; i++) {
             minSeg.tree[i] = INF;
             maxSeg.tree[i] = -INF;
         }
 
         for (int i = 0; i < n - 1; i++) {
-            int s, e, c;
-            cin >> s >> e >> c;
+            int s = readInt(), e = readInt(), c = readInt();
             inp[s].push_back({c, e});
             inp[e].push_back({c, s});
         }
@@ -176,15 +195,14 @@ pii query(int a, int b) {
 }
 
 int main() {
-    fio;
+    freopen("input.txt", "r", stdin);
     HLD.precalc();
-    int q;
-    cin >> q;
+    int q = readInt();
     while (q--) {
-        int D, E;
-        cin >> D >> E;
+        int D = readInt(), E = readInt();
+
         pii ans = query(D, E);
-        cout << ans.first << " " << ans.second << "\n";
+        printf("%d %d\n", ans.first, ans.second);
     }
     return 0;
 }
